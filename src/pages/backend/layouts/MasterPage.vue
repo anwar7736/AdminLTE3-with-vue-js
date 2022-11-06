@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Header ></Header>
-    <Sidebar ></Sidebar>
+    <Header v-if="loggedStatus"></Header>
+    <Sidebar v-if="loggedStatus"></Sidebar>
       <router-view></router-view>
 
     <Footer></Footer>
@@ -22,6 +22,12 @@ export default {
         Header,
         Sidebar,
         Footer
+    },
+    computed: {
+      loggedStatus()
+      {
+        return this.$store.getters.GET_AUTH_STATUS;
+      }
     }
 }
 </script>

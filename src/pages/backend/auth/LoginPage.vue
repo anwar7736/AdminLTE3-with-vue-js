@@ -8,7 +8,7 @@
     </div>
     <div class="card-body">
       <p class="login-box-msg">Sign in to start your session</p>
-
+      <span class="text-danger" v-if="errors.invalid">{{errors.invalid}}</span>
       <form method="post" @submit.prevent="adminLogin">
         <div class="input-group mb-3">
           <input type="email" v-model="form.email" class="form-control" placeholder="Email">
@@ -17,7 +17,8 @@
               <span class="fas fa-envelope"></span>
             </div>
           </div>
-        </div>
+        </div> 
+        <span class="text-danger" v-if="errors.email">{{errors.email[0]}}</span>
         <div class="input-group mb-3">
           <input type="password" v-model="form.password" class="form-control" placeholder="Password">
           <div class="input-group-append">
@@ -26,6 +27,7 @@
             </div>
           </div>
         </div>
+        <span class="text-danger" v-if="errors.password">{{errors.password[0]}}</span>
         <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
@@ -54,7 +56,7 @@
       <!-- /.social-auth-links -->
 
       <p class="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
+        <router-link to="/email-verification">I forgot my password</router-link>
       </p>
       <p class="mb-0">
         <router-link to="/register" class="text-center">Register a new membership</router-link>
@@ -75,9 +77,24 @@ export default {
     form: {
     email : '',
     password : '',
-  }
+  },
+  errors : {},
   }
  },
+
+ methods: {
+  adminLogin()
+  {
+    this.$store.dispatch("LOGIN", this.form)
+    .then(res=>{
+      console.log(res);
+      this.$router.push('/home');
+    })
+    .catch(err=>{
+      this.errors = err.response.data.errors;
+    })
+  }
+ }
 
 }
 </script>
