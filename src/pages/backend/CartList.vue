@@ -9,13 +9,19 @@
                    <h5>Shipping Charge : 50Tk</h5>
                    <h4>Subtotal : {{total_price + 50}}Tk</h4>
                    <center>
-                      <button class="btn btn-lg btn-info">Checkout Now!</button>
+                      <button class="btn btn-lg btn-info" @click="checkout" :disabled="disabled">Checkout Now!</button>
                    </center>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card">
+                <div class="alert alert-success" v-if="message">
+                    <p>Your order has been placed successfully</p>
+                </div>
+                <div class="alert alert-danger" v-if="message2">
+                    <p>Your cart has been empty now!</p>
+                </div>
                 <div class="card-body">
                     <h4>Cart Item</h4><hr>
                     <div class="row">
@@ -68,6 +74,14 @@
 <script>
 export default {
     name: 'cart-list',
+    data()
+    {
+        return{
+            message: false,
+            message2: false,
+            disabled: false,
+        }
+    },
     computed: {
         items()
         {
@@ -91,6 +105,32 @@ export default {
         {
             this.$store.dispatch("RemoveItem", id);
         },
+        checkout()
+        {
+            if(!this.$store.getters.GET_AUTH_STATUS)
+            {
+                this.$router.push('/');
+                localStorage.setItem('redirect_path', '/cart-list');
+            } 
+            else if(this.$store.getters.Item_Count == 0)
+            {
+                this.message2 = true;
+            }
+            else{
+                this.disabled = true;
+                this.$store.dispatch("Checkout").
+                then(()=>{
+                    this.message = true;
+                    this.disabled = false;
+                    setTimeout(()=>{
+                        this.message = false;
+                    },3000)
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            }
+        }
     }
 }
 </script>

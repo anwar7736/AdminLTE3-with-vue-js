@@ -51,6 +51,21 @@ export const product = {
         {
             context.commit("RemoveItem", id);
         }, 
+
+        Checkout(context)
+        {
+            axios.defaults.headers['Authorization'] = 'Bearer ' + context.getters.GET_AUTH_TOKEN;
+            return new Promise((resolve, reject)=>{
+                axios.post('checkout', context.state.cartItems)
+                .then(res=>{
+                    context.commit("ClearItem");
+					resolve(res.data);
+                })
+                .catch(err=>{
+					reject(err);
+                })
+            })
+        }
         
 },
 mutations: {
@@ -86,6 +101,10 @@ mutations: {
         let cartItems = state.cartItems;
         let index = cartItems.findIndex(i => i.id == id);
         cartItems.splice(index,1);
+    },
+    ClearItem(state)
+    {
+        state.cartItems = [];
     }
 }
 }

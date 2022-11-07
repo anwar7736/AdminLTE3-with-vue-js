@@ -75,8 +75,8 @@ export default {
  data(){
   return {
     form: {
-    email : '',
-    password : '',
+    email : 'anwar@gmail.com',
+    password : '12345678',
   },
   errors : {},
   }
@@ -88,7 +88,13 @@ export default {
     this.$store.dispatch("LOGIN", this.form)
     .then(res=>{
       console.log(res);
-      this.$router.push('/home');
+      let redirectPath = localStorage.getItem('redirect_path');
+      if(redirectPath)
+      {
+        this.$router.push(redirectPath);
+        localStorage.removeItem('redirect_path');
+      }
+      else this.$router.push('/home');
     })
     .catch(err=>{
       this.errors = err.response.data.errors;
